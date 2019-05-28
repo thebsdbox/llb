@@ -1,7 +1,6 @@
 package servertcp
 
 import (
-	"fmt"
 	"io"
 	"net"
 
@@ -20,17 +19,23 @@ import (
 // [goto loop]
 
 func persistentConnection(frontendConnection net.Conn, s *config.Service) error {
-	// Connect to Endpoint
-	ep := s.ReturnEndpointAddr()
 
-	log.Debugf("Attempting endpoint [%s]", ep)
+	var endpoint net.Conn
+	for {
+		// Connect to Endpoint
+		ep := s.ReturnEndpointAddr()
 
-	endpoint, err := net.Dial("tcp", ep)
-	if err != nil {
-		fmt.Println("dial error:", err)
-		// return nil, err
+		log.Debugf("Attempting endpoint [%s]", ep)
+
+		var err error
+		endpoint, err = net.Dial("tcp", ep)
+		if err != nil {
+			log.Warnf("%v", err)
+		} else {
+			log.Debugf("succesfully connected to [%s]", ep)
+			break
+		}
 	}
-	log.Debugf("succesfully connected to [%s]", ep)
 
 	// Build endpoint <front end> connectivity
 	go func() { io.Copy(frontendConnection, endpoint) }()
