@@ -9,6 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/thebsdbox/llb/pkg/config"
+	"github.com/thebsdbox/llb/pkg/nft"
 	"github.com/thebsdbox/llb/pkg/serverhttp"
 	"github.com/thebsdbox/llb/pkg/servertcp"
 )
@@ -41,6 +42,15 @@ var llbCmd = &cobra.Command{
 	Short: "The Little Load Balancer",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
+	},
+}
+
+var llbNftCmd = &cobra.Command{
+	Use:   "nft",
+	Short: "The Little Load Balancer",
+	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Help()
+		nft.CreateLoadBalancer()
 	},
 }
 
@@ -135,6 +145,7 @@ func init() {
 
 	// Add subcommands
 	llbCmd.AddCommand(llbExample)
+	llbCmd.AddCommand(llbNftCmd)
 	llbCmd.AddCommand(llbServerCmd)
 	llbCmd.AddCommand(llbVersionCmd)
 }
